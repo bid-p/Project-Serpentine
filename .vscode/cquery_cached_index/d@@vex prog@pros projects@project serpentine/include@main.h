@@ -43,6 +43,7 @@
 //
 #include "drive.hpp"
 #include "init.hpp"
+#include "odometry.hpp"
 #include "ports.hpp"
 
 //#include "pros/api_legacy.h"
