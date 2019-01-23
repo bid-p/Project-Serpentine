@@ -1,57 +1,144 @@
 #include "main.h"
 
 const double convFactor =
-    2 * pi * 2.75 * 2.54 / 360; // assumes 2.75in tracker wheels and centimeters
+    2 * pi * 2.75 /*2.54*/ / 360; // assumes 2.75in tracker wheels and inches
+
+const double chassisWidth = 7.25;
 
 double currPosX = 0;
 double currPosY = 0;
-double currAngle = 0;
+double heading = 0;
 
-pros::ADIEncoder RTracker(SPORT_ENC_RTOP, SPORT_ENC_RBOT, false);
+pros::ADIEncoder RTracker(SPORT_ENC_RTOP, SPORT_ENC_RBOT, true);
 pros::ADIEncoder LTracker(SPORT_ENC_LTOP, SPORT_ENC_LBOT, false);
-pros::ADIEncoder MTracker(SPORT_ENC_MTOP, SPORT_ENC_MBOT, false);
-
-pros::ADIGyro gyro1(SPORT_GYRO_1);
-pros::ADIGyro gyro2(SPORT_GYRO_2);
 
 double degToRad(double deg) { return deg * pi / 180; }
 
 double radToDeg(double rad) { return rad * 180 / pi; }
 
-void trackPosTask() {
+// trackType currTrackType;
+
+// void EGETrackPosTask() {
+//   double deltaX;
+//   double deltaY;
+//   double deltaAngle;
+//   double deltaSector;
+//   double genRadius;
+//
+//   double trackerVal;
+//   double gyroVal;
+//   double lastTrackerVal;
+//   double lastGyroVal;
+//
+//   while (true) {
+//
+//     trackerVal = ((RTracker.get_value() * convFactor) +
+//                   (LTracker.get_value() * convFactor)) /
+//                  2;
+//     // gyroVal = degToRad(gyro1.get_value());
+//
+//     deltaSector = trackerVal - lastTrackerVal;
+//     deltaAngle = gyroVal - lastGyroVal;
+//
+//     genRadius = deltaAngle == 0 ? 0 : deltaSector / deltaAngle;
+//
+//     deltaX = deltaAngle == 0 ? 0 : genRadius - (genRadius * cos(deltaAngle));
+//     deltaY = deltaAngle == 0 ? deltaSector : genRadius * sin(deltaAngle);
+//
+//     currPosX += deltaX * cos(heading) + deltaY * sin(heading);
+//     currPosY += deltaY * cos(heading) - deltaX * sin(heading);
+//     heading += deltaAngle;
+//
+//     lastTrackerVal = trackerVal;
+//     lastTrackerVal = gyroVal;
+//
+//     pros::delay(10);
+//   }
+// }
+//
+// void EEETrackPosTask() {
+//   double deltaX;
+//   double deltaY;
+//   double deltaAngle;
+//   double deltaSector;
+//   double genRadius;
+//
+//   double REncVal;
+//   double LEncVal;
+//   double HEncVal;
+//   double lastREncVal;
+//   double lastLEncVal;
+//   double lastHEncVal;
+//
+//   while (true) {
+//
+//     REncVal = RTracker.get_value() * convFactor;
+//     LEncVal = LTracker.get_value() * convFactor;
+//     // HEncVal = HTracker.get_value() * convFactor;
+//
+//     deltaSector = ((REncVal - lastREncVal) + (LEncVal - lastLEncVal)) / 2;
+//
+//     deltaAngle = (REncVal - LEncVal) / chassisWidth;
+//
+//     lastREncVal = REncVal;
+//     lastLEncVal = LEncVal;
+//     lastHEncVal = HEncVal;
+//
+//     pros::delay(10);
+//   }
+// }
+
+void EETrackPosTask(void *) {
+
   double deltaX;
   double deltaY;
-  double deltaAngle;
+  double deltaTheta;
   double deltaSector;
   double genRadius;
 
-  double trackerVal;
-  double gyroVal;
-  double lastTrackerVal;
-  double lastGyroVal;
+  double REncVal;
+  double LEncVal;
+  double lastREncVal;
+  double lastLEncVal;
+
+  double avgTrackerVal;
+  double lastAvgTrackerVal;
+
+  double turnVal;
+  double lastTurnVal;
+
+  pros::lcd::print(3, "odom started");
 
   while (true) {
 
-    trackerVal = ((RTracker.get_value() * convFactor) +
-                  (LTracker.get_value() * convFactor)) /
-                 2;
-    gyroVal = degToRad(gyro1.get_value());
+    REncVal = RTracker.get_value() * convFactor;
+    LEncVal = LTracker.get_value() * convFactor;
 
-    deltaSector = trackerVal - lastTrackerVal;
-    deltaAngle = gyroVal - lastGyroVal;
+    avgTrackerVal = (REncVal + LEncVal) / 2;
 
-    genRadius = deltaAngle == 0 ? 0 : deltaSector / deltaAngle;
+    turnVal = (REncVal - LEncVal) / chassisWidth;
 
-    deltaX = deltaAngle == 0 ? 0 : genRadius - (genRadius * cos(deltaAngle));
-    deltaY = deltaAngle == 0 ? deltaSector : genRadius * sin(deltaAngle);
+    deltaSector = avgTrackerVal - lastAvgTrackerVal;
+    deltaTheta = turnVal - lastTurnVal;
 
-    currPosX += deltaX * cos(currAngle) + deltaY * sin(currAngle);
-    currPosY += deltaY * cos(currAngle) - deltaX * sin(currAngle);
-    currAngle += deltaAngle;
+    genRadius = deltaTheta == 0 ? 0 : deltaSector / deltaTheta;
 
-    lastTrackerVal = trackerVal;
-    lastTrackerVal = gyroVal;
+    deltaX = deltaTheta == 0 ? 0 : genRadius - (genRadius * cos(deltaTheta));
+    deltaY = deltaTheta == 0 ? deltaSector : genRadius * sin(deltaTheta);
 
-    pros::delay(10);
+    currPosX += deltaX * cos(heading) + deltaY * sin(heading);
+    currPosY += deltaY * cos(heading) - deltaX * sin(heading);
+    heading += deltaTheta;
+
+    lastAvgTrackerVal = avgTrackerVal;
+    lastTurnVal = turnVal;
+
+    // pros::lcd::print(4, "LTracker: %f    RTracker: %f", RTracker.get_value(),
+    //                  LTracker.get_value());
+    pros::lcd::print(5, "LENC VAL: %f    RENC VAL: %f", LEncVal, REncVal);
+    pros::lcd::print(6, "deltaSector: %f    deltaTheta: %f", deltaSector,
+                     deltaTheta);
+
+    pros::delay(5);
   }
 }

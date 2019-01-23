@@ -10,6 +10,10 @@ extern Controller controller;
 
 extern const double joyDeadband;
 
-extern void robotStats();
+void waitUntilSettled(okapi::AbstractMotor &motor);
+
+extern pros::Task driveActTask;
+
+extern void initActTasks();
 
 #endif

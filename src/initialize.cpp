@@ -1,14 +1,5 @@
 #include "main.h"
-
-void on_center_button() {
-  static bool pressed = false;
-  pressed = !pressed;
-  if (pressed) {
-    pros::lcd::set_text(2, "I was pressed!");
-  } else {
-    pros::lcd::clear_line(2);
-  }
-}
+#include "odometry.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -16,11 +7,18 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
-  pros::lcd::initialize();
-  pros::lcd::set_text(1, "Hello PROS User!");
 
-  pros::lcd::register_btn1_cb(on_center_button);
+void initialize()
+{
+    pros::lcd::initialize();
+
+    initActTasks();
+
+    odometry::init();
+    pros::Task odometryTask(odometry::run, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Odometry");
+    // pros::Task printPositionTask(printPosition, nullptr, TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Position Printing");
+
+    drive::currState = drive::yield;
 }
 
 /**

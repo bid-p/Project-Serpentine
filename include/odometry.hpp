@@ -1,24 +1,26 @@
-#ifndef ODOM_GUARD
-#define ODOM_GUARD
+#pragma once
 
 #include "api.h"
 #include "okapi/api.hpp"
+#include <tuple>
+#include "drive.hpp"
 
+namespace odometry
+{
 using namespace okapi;
 
-extern const double convFactor;
+extern QLength currX;
+extern QLength currY;
+extern QAngle currAngle;
 
-extern double currPosX;
-extern double currPosY;
-extern double currAngle;
+void init();
 
-extern pros::ADIEncoder RTracker;
-extern pros::ADIEncoder LTracker;
-extern pros::ADIEncoder MTracker;
+void calculate();
 
-extern pros::ADIGyro gyro1;
-extern pros::ADIGyro gyro2;
+// QLength distanceToPoint(QLength x, QLength y);
+// QAngle angleToPoint(QLength x, QLength y);
 
-extern void trackPosTask();
+// std::tuple<QLength, QAngle> distanceAndAngleToPoint(QLength x, QLength y);
 
-#endif
+void run(void *p);
+} // namespace odometry

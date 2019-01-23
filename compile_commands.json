@@ -63,11 +63,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/initialize.cpp.o",
-            "src\\initialize.cpp"
+            "bin/init.cpp.o",
+            "src\\init.cpp"
         ],
         "directory": "D:\\VEX Prog\\PROS Projects\\Project Serpentine",
-        "file": "src\\initialize.cpp"
+        "file": "src\\init.cpp"
     },
     {
         "arguments": [
@@ -98,11 +98,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/drive.cpp.o",
-            "src\\drive.cpp"
+            "bin/initialize.cpp.o",
+            "src\\initialize.cpp"
         ],
         "directory": "D:\\VEX Prog\\PROS Projects\\Project Serpentine",
-        "file": "src\\drive.cpp"
+        "file": "src\\initialize.cpp"
     },
     {
         "arguments": [
@@ -155,7 +155,7 @@
             "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/include-fixed",
             "-isystemc:\\program files\\pros\\toolchain\\usr\\bin\\../lib/gcc/arm-none-eabi/7.2.1/../../../../arm-none-eabi/include",
             "-iquote./include",
-            "-iquote./include/./",
+            "-iquote./include/subsystems/",
             "-mcpu=cortex-a9",
             "-mfpu=neon-fp16",
             "-mfloat-abi=softfp",
@@ -168,11 +168,11 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/odometry.cpp.o",
-            "src\\odometry.cpp"
+            "bin/subsystems/drive.cpp.o",
+            "src\\subsystems\\drive.cpp"
         ],
         "directory": "D:\\VEX Prog\\PROS Projects\\Project Serpentine",
-        "file": "src\\odometry.cpp"
+        "file": "src\\subsystems\\drive.cpp"
     },
     {
         "arguments": [
@@ -203,10 +203,10 @@
             "-fdiagnostics-color",
             "--std=gnu++17",
             "-o",
-            "bin/init.cpp.o",
-            "src\\init.cpp"
+            "bin/odometry.cpp.o",
+            "src\\odometry.cpp"
         ],
         "directory": "D:\\VEX Prog\\PROS Projects\\Project Serpentine",
-        "file": "src\\init.cpp"
+        "file": "src\\odometry.cpp"
     }
 ]

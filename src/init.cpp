@@ -4,12 +4,23 @@ Controller controller;
 
 const double joyDeadband = .08;
 
-void robotStats() {
-  // pros::lcd::print(1, "Drive State: %c | Drive Temp: %i", driveState,
-  //                  (int)driveR1.get_temperature());
-  pros::lcd::print(2, "DL Value: %i, DR Value: %i", (int)driveL2.get_position(),
-                   (int)driveR2.get_position());
-  pros::lcd::print(3, "Gyro Val: %i, gyro.get_value(); ");
+void waitUntilSettled(okapi::AbstractMotor &motor)
+{
+  auto settledUtil = SettledUtilFactory::create();
 
-  pros::delay(10);
+  while (
+      !settledUtil.isSettled(motor.getTargetPosition() - motor.getPosition()))
+  {
+    pros::delay(10);
+  }
+}
+
+void initActTasks()
+{
+
+  pros::Task driveActTask(drive::act, NULL, TASK_PRIORITY_DEFAULT,
+                          TASK_STACK_DEPTH_DEFAULT, "Act Drive");
+
+  pros::Task driveUpdateTask(drive::update, NULL, TASK_PRIORITY_DEFAULT,
+                             TASK_STACK_DEPTH_DEFAULT, "Update Drive");
 }
