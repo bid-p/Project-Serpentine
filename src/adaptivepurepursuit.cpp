@@ -49,10 +49,18 @@ void AdaptivePurePursuit::loop()
 				   (this->target.x.convert(inch) - robotPosition.x.convert(inch))) *
 		radian;
 
+	int direction = 1;
+
+	if (heading.convert(degree) > 90) {
+		heading = (heading.convert(degree) - 180) * degree;
+	} else if (heading.convert(degree) < -90) {
+    		heading = (heading.convert(degree) + 180) * degree;
+	}
+
 	turnController->setTarget(heading.convert(degree));
 
 	double turnPower = turnController->step(odometry::currAngle.convert(degree));
 
-	drive::chassis.driveVector(forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
+    	drive::chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
 }
 } // namespace pathfollowing
