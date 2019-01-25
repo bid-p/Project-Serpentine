@@ -1,17 +1,20 @@
 #include "odometry.hpp"
 #include "drive.hpp"
+#include "ports.hpp"
 
 namespace odometry
 {
-// ADIEncoder rightEnc(RIGHT_ENC.front(), RIGHT_ENC.back(), false);
-// ADIEncoder leftEnc(LEFT_ENC.front(), LEFT_ENC.back());
+ADIEncoder rightEnc(SPORT_ENC_RTOP, SPORT_ENC_RBOT, false);
+ADIEncoder leftEnc(SPORT_ENC_LTOP, SPORT_ENC_LBOT);
 
 double rEncLast;
 double lEncLast;
 
-const double ENC_WHEEL = 4.125;
-const double CHASSISWIDTH = 12.25;
+const double ENC_WHEEL = 2.75;
+const double ENC_WHEEL2 = 4.125;
+const double CHASSISWIDTH = 12.863 /*7.12*/;
 const double TICKSINCH = ENC_WHEEL * PI / 360.0;
+const double TICKSINCH2 = ENC_WHEEL2 * PI / 360.0;
 
 QLength currX;
 QLength currY;
@@ -23,8 +26,8 @@ void init()
     currY = 0_ft;
     currAngle = 0_deg;
 
-    rEncLast = /*rightEnc.get()*/ drive::driveR2.get_position() * TICKSINCH;
-    lEncLast = /*leftEnc.get()*/ drive::driveL2.get_position() * TICKSINCH;
+    rEncLast = /*rightEnc.get()*/ drive::driveR1.get_position() * TICKSINCH2;
+    lEncLast = /*leftEnc.get()*/ drive::driveL1.get_position() * TICKSINCH2;
 }
 
 /**
@@ -38,8 +41,8 @@ void calculate()
     double dY = 0.0;
     double dTheta = 0.0;
 
-    double rCurrEnc = /*rightEnc.get()*/ drive::driveR2.get_position() * TICKSINCH;
-    double lCurrEnc = /*leftEnc.get()*/ drive::driveL2.get_position() * TICKSINCH;
+    double rCurrEnc = /*rightEnc.get() */ drive::driveR2.get_position() * TICKSINCH2;
+    double lCurrEnc = /*leftEnc.get() */ drive::driveL2.get_position() * TICKSINCH2;
 
     double rDEnc = rCurrEnc - rEncLast;
     double lDEnc = lCurrEnc - lEncLast;
@@ -108,7 +111,11 @@ void printPosition(void *p)
         pros::lcd::print(2, "Y: %f inches", y);
         pros::lcd::print(3, "THETA: %f degs", angle);
 
-        pros::lcd::print(4, "dL2 RPM: %f", drive::driveL2.getActualVelocity());
+        pros::lcd::print(4, "dL1 RPM: %f   dR1 RPM: %f", drive::driveL1.getActualVelocity(), drive::driveR1.getActualVelocity());
+
+        // pros::lcd::print(5, "chassisWidth: %f", (rightEnc.get() * TICKSINCH - leftEnc.get() * TICKSINCH) / (20 * PI));
+
+        // pros::lcd::print(6, "chassisWidth: %f", (drive::driveR1.get_position() * TICKSINCH2 - drive::driveL1.get_position() * TICKSINCH2) / (20 * PI));
 
         pros::delay(10);
     }

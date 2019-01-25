@@ -6,8 +6,8 @@ const int MPORT_DRIVE_L2 = 1;
 const int MPORT_DRIVE_R1 = 20;
 const int MPORT_DRIVE_R2 = 11;
 
-const char SPORT_ENC_RTOP = 'A';
-const char SPORT_ENC_RBOT = 'B';
+const char SPORT_ENC_RTOP = 'C';
+const char SPORT_ENC_RBOT = 'D';
 
 const char SPORT_ENC_LTOP = 'G';
 const char SPORT_ENC_LBOT = 'H';

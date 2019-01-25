@@ -27,8 +27,8 @@ void autonomous()
 
     pathfollowing::AdaptivePurePursuit controller(
         std::make_unique<IterativePosPIDController>(0.1, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-        std::make_unique<IterativePosPIDController>(0.015, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-        30, 10.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
+        std::make_unique<IterativePosPIDController>(0.0075, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+        30, 0.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
 
     controller.setPath(&BRAIN);
     while (true)

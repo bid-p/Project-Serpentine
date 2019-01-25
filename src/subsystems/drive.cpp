@@ -15,7 +15,7 @@ Motor driveR2(MPORT_DRIVE_R2, true, AbstractMotor::gearset::green, AbstractMotor
 ChassisControllerIntegrated chassis =
     ChassisControllerFactory::create(
         {MPORT_DRIVE_L1, MPORT_DRIVE_L2}, {-MPORT_DRIVE_R1, -MPORT_DRIVE_R2},
-        AbstractMotor::gearset::green, {4.125_in, 12.727_in});
+        AbstractMotor::gearset::green, {4.125_in, 12.863_in});
 
 AsyncMotionProfileController profileController =
     AsyncControllerFactory::motionProfile(/*1.09*/ 1.0, 2.0,

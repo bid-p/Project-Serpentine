@@ -11,7 +11,8 @@ AdaptivePurePursuit::AdaptivePurePursuit(
 										 turnController(std::move(turn)),
 										 mainLookahead(lookahead),
 										 lookahead(lookahead),
-										 lookaheadKf(lookaheadKf) {}
+										 lookaheadKf(lookaheadKf),
+										 direction(1) {}
 
 void AdaptivePurePursuit::setPath(path::Path *path)
 {
@@ -44,23 +45,30 @@ void AdaptivePurePursuit::loop()
 	straightController->setTarget(distTolookaheadPoint);
 
 	double forwardPower = straightController->step(0);
-	QAngle heading =
+	QAngle bearing =
 		std::atan2((this->target.y.convert(inch) - robotPosition.y.convert(inch)),
 				   (this->target.x.convert(inch) - robotPosition.x.convert(inch))) *
 		radian;
 
-	int direction = 1;
+	direction = 1;
 
-	if (heading.convert(degree) > 90) {
-		heading = (heading.convert(degree) - 180) * degree;
-	} else if (heading.convert(degree) < -90) {
-    		heading = (heading.convert(degree) + 180) * degree;
+	if (bearing.convert(degree) > 90)
+	{
+		bearing = (bearing.convert(degree) - 180) * degree;
+		direction *= -1;
+	}
+	else if (bearing.convert(degree) < -90)
+	{
+		bearing = (bearing.convert(degree) + 180) * degree;
+		direction *= -1;
 	}
 
-	turnController->setTarget(heading.convert(degree));
+	turnController->setTarget(bearing.convert(degree));
 
 	double turnPower = turnController->step(odometry::currAngle.convert(degree));
 
-    	drive::chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
+	printf("%f\n", bearing.convert(degree)); //lul that's big brain
+
+	drive::chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
 }
 } // namespace pathfollowing

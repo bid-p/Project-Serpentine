@@ -31,7 +31,7 @@ PointAndDistance Path::getClosestPointAndDistance(Point inputPoint)
     {
         Point tempPoint = pointAt(t);
         double distance = sqrt(pow((tempPoint.x.convert(inch) - x), 2) + pow((tempPoint.y.convert(inch) - y), 2));
-        if (distance < distanceLeast)
+        if (distance <= distanceLeast)
         {
             distanceLeast = distance;
             closestPoint = tempPoint;

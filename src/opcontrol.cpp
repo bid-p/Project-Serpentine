@@ -24,6 +24,7 @@
 
 void opcontrol()
 {
+
   drive::currState = drive::notRunning;
 
   while (true)
