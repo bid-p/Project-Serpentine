@@ -27,11 +27,11 @@ PointAndDistance Path::getClosestPointAndDistance(Point inputPoint)
     Point closestPoint = pointAt(0);
     double distanceLeast = sqrt(pow((closestPoint.x.convert(inch) - x), 2) + pow((closestPoint.y.convert(inch) - y), 2));
 
-    for (int t = 1; t <= resolution; t++)
+    for (int t = resolution; t >= 0; t--)
     {
         Point tempPoint = pointAt(t);
         double distance = sqrt(pow((tempPoint.x.convert(inch) - x), 2) + pow((tempPoint.y.convert(inch) - y), 2));
-        if (distance <= distanceLeast)
+        if (distance < distanceLeast)
         {
             distanceLeast = distance;
             closestPoint = tempPoint;
