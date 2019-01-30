@@ -59,10 +59,19 @@ void calculate()
     currX = (dX * cos(currAngle.convert(radian)) + dY * sin(currAngle.convert(radian)) + currX.convert(inch)) * inch;
     currY = (dY * cos(currAngle.convert(radian)) - dX * sin(currAngle.convert(radian)) + currY.convert(inch)) * inch;
 
-    currAngle = ((dTheta * 180.0 / PI) + currAngle.convert(degree)) * degree;
+    QAngle tempCurrAngle = ((dTheta * 180.0 / PI) + currAngle.convert(degree)) * degree;
 
     rEncLast = rCurrEnc;
     lEncLast = lCurrEnc;
+
+    while (tempCurrAngle.convert(degree) >= 360.0) {
+        tempCurrAngle = (tempCurrAngle.convert(degree) - 360.0) * degree;
+    }
+    while (tempCurrAngle.convert(degree) < 0.0) {
+        tempCurrAngle = (tempCurrAngle.convert(degree) + 360.0) * degree;
+    }
+
+    currAngle = tempCurrAngle;
 }
 
 // QLength distanceToPoint(QLength x, QLength y) {}
