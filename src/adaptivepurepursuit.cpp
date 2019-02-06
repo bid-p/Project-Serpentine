@@ -32,7 +32,6 @@ void AdaptivePurePursuit::loop()
 
 	path::Point robotPosition = {odometry::currX, odometry::currY};
 	path::PointAndDistance closestPointAndDistance = path->getClosestPointAndDistance(robotPosition);
-
 	int newLookahead = lookahead - (closestPointAndDistance.distance.convert(inch) * lookaheadKf);
 	newLookahead = (newLookahead < 0) ? 1 : newLookahead;
 
@@ -46,28 +45,50 @@ void AdaptivePurePursuit::loop()
 
 	double forwardPower = straightController->step(0);
 	QAngle bearing =
-		std::atan2((this->target.y.convert(inch) - robotPosition.y.convert(inch)),
-				   (this->target.x.convert(inch) - robotPosition.x.convert(inch))) *
+		std::atan2((this->target.x.convert(inch) - robotPosition.x.convert(inch)),
+				   (this->target.y.convert(inch) - robotPosition.y.convert(inch))) *
 		radian;
+
+	// auto xError = this->target.x.convert(inch) - robotPosition.x.convert(inch);
+	// auto yError = this->target.y.convert(inch) - robotPosition.y.convert(inch);
+
+	// auto atanBearing = xError == 0 ? 0 : std::atan(yError / xError);
+
+	// QAngle bearing = std::atan2(
+	// 		std::cos(atanBearing),
+	// 		std::atan(atanBearing)
+	// );
 
 	direction = 1;
 
-	if (bearing.convert(degree) > 90)
+	// if (bearing.convert(degree) > 90)
+	// {
+	// 	bearing = (bearing.convert(degree) - 180) * degree;
+	// 	direction *= -1;
+	// }
+	// else if (bearing.convert(degree) < -90)
+	// {
+	// 	bearing = (bearing.convert(degree) + 180) * degree;
+	// 	direction *= -1;
+	// }
+
+	QAngle turnControllerPV = odometry::currAngle;
+
+	if (bearing.convert(radian) < 0 && turnControllerPV.convert(radian) > 0)
 	{
-		bearing = (bearing.convert(degree) - 180) * degree;
-		direction *= -1;
-	}
-	else if (bearing.convert(degree) < -90)
-	{
-		bearing = (bearing.convert(degree) + 180) * degree;
-		direction *= -1;
+		turnControllerPV = (turnControllerPV.convert(radian) - M_PI * 2) * radian;
 	}
 
 	turnController->setTarget(bearing.convert(degree));
 
-	double turnPower = turnController->step(odometry::currAngle.convert(degree));
+	// double turnPower = turnController->step(odometry::currAngle.convert(degree));
+	// double turnPower = turnController->step(currHeading.convert(degree));
+	double turnPower = turnController->step(turnControllerPV.convert(degree));
 
-	printf("%f\n", bearing.convert(degree)); //lul that's big brain
+	// printf("%f\n", bearing.convert(degree)); //lul that's big brain
+
+	// printf("%.0f,%.5f,%.5f,%.5f,%.5f\n", bearing.convert(degree), this->target.x.convert(inch), this->target.y.convert(inch), robotPosition.x.convert(inch), robotPosition.y.convert(inch));
+	printf("Heading: %.0f\nTarget heading: %.0f\n\nDistance to point: %.10f\n\nPoint at: %d\n\nPoint: (%.10f, %.10f)\nRobot: (%.10f, %.10f)\n\nClosest Point (%d) (%.10f, %.10f)", odometry::currAngle.convert(degree), bearing.convert(degree), distTolookaheadPoint, requiredPosition + newLookahead, this->target.x.convert(inch), this->target.y.convert(inch), robotPosition.x.convert(inch), robotPosition.y.convert(inch), closestPointAndDistance.point.t, closestPointAndDistance.point.x, closestPointAndDistance.point.y);
 
 	drive::chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
 }

@@ -17,20 +17,47 @@ void autonomous()
     // initProgSkills();
 
     // executeProgSkills();
-
-    path::Line BRAIN(
+    path::Line section1(
         {0_in, 0_in},
-        {12_in, 36_in},
+        {10_in, 20_in},
+        // {0_in, 36_in},
         200, // the resolution (how many T there are)
-        40   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
     );
+
+    path::Line section2(
+        {10_in, 20_in},
+        {20_in, 0_in},
+        // {0_in, 36_in},
+        200, // the resolution (how many T there are)
+        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    );
+
+    path::Line section3(
+        {20_in, 20_in},
+        {0_in, -20_in},
+        // {0_in, 36_in},
+        200, // the resolution (how many T there are)
+        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    );
+
+    path::Line section4(
+        {20_in, 0_in},
+        {-20_in, 0_in},
+        // {0_in, 36_in},
+        200, // the resolution (how many T there are)
+        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    );
+
+    path::PathGroup squareNigga({section1, section2, section3, section4}, 400, 10);
 
     pathfollowing::AdaptivePurePursuit controller(
         std::make_unique<IterativePosPIDController>(0.1, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
         std::make_unique<IterativePosPIDController>(0.0075, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
         30, 0.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
 
-    controller.setPath(&BRAIN);
+    controller.setPath(&squareNigga);
+
     while (true)
     {
         controller.loop();

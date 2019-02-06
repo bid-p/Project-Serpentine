@@ -41,8 +41,8 @@ void calculate()
     double dY = 0.0;
     double dTheta = 0.0;
 
-    double rCurrEnc = /*rightEnc.get() */ drive::driveR2.get_position() * TICKSINCH2;
-    double lCurrEnc = /*leftEnc.get() */ drive::driveL2.get_position() * TICKSINCH2;
+    double rCurrEnc = /*rightEnc.get() */ drive::driveR1.get_position() * TICKSINCH2;
+    double lCurrEnc = /*leftEnc.get() */ drive::driveL1.get_position() * TICKSINCH2;
 
     double rDEnc = rCurrEnc - rEncLast;
     double lDEnc = lCurrEnc - lEncLast;
@@ -64,10 +64,12 @@ void calculate()
     rEncLast = rCurrEnc;
     lEncLast = lCurrEnc;
 
-    while (tempCurrAngle.convert(degree) >= 360.0) {
+    while (tempCurrAngle.convert(degree) >= 360.0)
+    {
         tempCurrAngle = (tempCurrAngle.convert(degree) - 360.0) * degree;
     }
-    while (tempCurrAngle.convert(degree) < 0.0) {
+    while (tempCurrAngle.convert(degree) < 0.0)
+    {
         tempCurrAngle = (tempCurrAngle.convert(degree) + 360.0) * degree;
     }
 
@@ -105,7 +107,7 @@ void printPosition(void *p)
     pros::Controller controller(pros::E_CONTROLLER_MASTER);
     controller.clear();
     using namespace okapi;
-    okapi::Logger *log = okapi::Logger::instance();
+    // okapi::Logger *log = okapi::Logger::instance();
 
     while (true)
     {

@@ -1,4 +1,5 @@
-#include "path.hpp"
+#include "path/path.hpp"
+#include <stdio.h>
 #include <cmath>
 
 namespace path
@@ -23,7 +24,8 @@ PointAndDistance Path::getClosestPointAndDistance(Point inputPoint)
     using namespace okapi;
 
     double x = inputPoint.x.convert(inch);
-    double y = inputPoint.x.convert(inch);
+    double y = inputPoint.y.convert(inch);
+
     Point closestPoint = pointAt(0);
     double distanceLeast = sqrt(pow((closestPoint.x.convert(inch) - x), 2) + pow((closestPoint.y.convert(inch) - y), 2));
 
