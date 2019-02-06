@@ -16,51 +16,71 @@ void autonomous()
 {
     // initProgSkills();
 
-    // executeProgSkills();
+    // executeProgSkills();ss
     path::Line section1(
         {0_in, 0_in},
-        {10_in, 20_in},
+        {36_in, 0_in},
         // {0_in, 36_in},
         200, // the resolution (how many T there are)
         10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
     );
 
-    path::Line section2(
-        {10_in, 20_in},
-        {20_in, 0_in},
-        // {0_in, 36_in},
-        200, // the resolution (how many T there are)
-        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
-    );
+    // path::Line reverseNigga(
+    //     {0_in, 0_in},
+    //     {-36_in, 0_in},
+    //     200,
+    //     10 // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    // );
+    // path::Line section2(
+    //     {36_in, 0_in},
+    //     {36_in, 36_in},
+    //     // {0_in, 36_in},
+    //     200, // the resolution (how many T there are)
+    //     10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    // );
 
-    path::Line section3(
-        {20_in, 20_in},
-        {0_in, -20_in},
-        // {0_in, 36_in},
-        200, // the resolution (how many T there are)
-        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
-    );
+    // path::Line section3(
+    //     {36_in, 36_in},
+    //     {0_in, -36_in},
+    //     // {0_in, 36_in},
+    //     200, // the resolution (how many T there are)
+    //     10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    // );
 
-    path::Line section4(
-        {20_in, 0_in},
-        {-20_in, 0_in},
-        // {0_in, 36_in},
-        200, // the resolution (how many T there are)
-        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
-    );
+    // path::Line section4(
+    //     {36_in, 0_in},
+    //     {-36_in, 0_in},
+    //     // {0_in, 36_in},
+    //     200, // the resolution (how many T there are)
+    //     10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+    // );
 
-    path::PathGroup squareNigga({section1, section2, section3, section4}, 400, 10);
+    // path::PathGroup squareNigga({section1, section2, section3, section4}, 800, 10);
+
+    // path::PathGroup straightRight({section1, section2}, 800, 10);
+
+    path::PathGroup straight({section1}, 200, 10);
 
     pathfollowing::AdaptivePurePursuit controller(
-        std::make_unique<IterativePosPIDController>(0.1, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-        std::make_unique<IterativePosPIDController>(0.0075, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-        30, 0.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
+        std::make_unique<IterativePosPIDController>(0.2, 0.0, 20.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+        std::make_unique<IterativePosPIDController>(0.001, 0.0, 40.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+        30, 1.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
 
-    controller.setPath(&squareNigga);
+    // drive::chassis.setBrakeMode(AbstractMotor::brakeMode::brake);
 
-    while (true)
+    controller.setPath(&section1); // note to sid i changed the lines to old relative lines
+    while (!controller.isSettled())
     {
         controller.loop();
         pros::delay(10);
     }
+
+    // controller.setPath(&reverseNigga);
+    // while (!controller.isSettled())
+    // {
+    //     controller.loop();
+    //     pros::delay(10);
+    // }
+
+    //drive::chassis.moveDistance(0_ft);
 }

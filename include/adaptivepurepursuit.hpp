@@ -29,5 +29,7 @@ public:
   void setLookahead(int lookahead);
 
   void loop();
+
+  bool isSettled();
 };
 } // namespace pathfollowing

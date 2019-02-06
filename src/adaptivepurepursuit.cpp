@@ -63,12 +63,12 @@ void AdaptivePurePursuit::loop()
 
 	// if (bearing.convert(degree) > 90)
 	// {
-	// 	bearing = (bearing.convert(degree) - 180) * degree;
+	// 	//bearing = (bearing.convert(degree) - 180) * degree;
 	// 	direction *= -1;
 	// }
 	// else if (bearing.convert(degree) < -90)
 	// {
-	// 	bearing = (bearing.convert(degree) + 180) * degree;
+	// 	//bearing = (bearing.convert(degree) + 180) * degree;
 	// 	direction *= -1;
 	// }
 
@@ -91,5 +91,16 @@ void AdaptivePurePursuit::loop()
 	printf("Heading: %.0f\nTarget heading: %.0f\n\nDistance to point: %.10f\n\nPoint at: %d\n\nPoint: (%.10f, %.10f)\nRobot: (%.10f, %.10f)\n\nClosest Point (%d) (%.10f, %.10f)", odometry::currAngle.convert(degree), bearing.convert(degree), distTolookaheadPoint, requiredPosition + newLookahead, this->target.x.convert(inch), this->target.y.convert(inch), robotPosition.x.convert(inch), robotPosition.y.convert(inch), closestPointAndDistance.point.t, closestPointAndDistance.point.x, closestPointAndDistance.point.y);
 
 	drive::chassis.driveVector(direction * forwardPower, turnPower); // TODO CHASSIS MODEL IN CONSTRUCTOR INSTEAD OF HERE
+}
+
+bool AdaptivePurePursuit::isSettled()
+{
+	path::Point endPoint = path->pointAt(path->getResolution());
+	double distance = sqrt(pow(endPoint.x.convert(inch) - odometry::currX.convert(inch), 2) + pow(endPoint.y.convert(inch) - odometry::currY.convert(inch), 2));
+	if (distance < 1.5)
+	{ // stop as soon as 1.5 inch away from endpoint
+		return true;
+	}
+	return false;
 }
 } // namespace pathfollowing

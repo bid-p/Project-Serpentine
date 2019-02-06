@@ -14,6 +14,9 @@ Point Line::pointAt(int T)
     int lilT = (T > resolution) ? resolution : (T < 0) ? 0 : T;
     double x = (end.x.convert(okapi::inch) * (double)lilT) / ((double)resolution) + start.x.convert(okapi::inch);
     double y = (end.y.convert(okapi::inch) * (double)lilT) / ((double)resolution) + start.y.convert(okapi::inch);
+    //double x = ((start.x.convert(okapi::inch) - end.x.convert(okapi::inch)) * (double)lilT / (double)resolution) + end.x.convert(okapi::inch);
+    //double y = ((start.y.convert(okapi::inch) - end.y.convert(okapi::inch)) * (double)lilT / (double)resolution) + end.y.convert(okapi::inch);
+
     return {x * okapi::inch, y * okapi::inch, lilT};
 }
 } // namespace path
