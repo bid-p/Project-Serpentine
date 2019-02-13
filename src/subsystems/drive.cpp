@@ -31,10 +31,10 @@ void update(void *)
     {
       currState = running;
     }
-    else
-    {
-      currState = notRunning;
-    }
+    // else
+    // {
+    //   currState = notRunning;
+    // }
     pros::delay(10);
   }
 }

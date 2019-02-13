@@ -19,10 +19,10 @@ void autonomous()
     // executeProgSkills();ss
     path::Line section1(
         {0_in, 0_in},
-        {36_in, 0_in},
+        {36_in, 36_in},
         // {0_in, 36_in},
         200, // the resolution (how many T there are)
-        10   // the lookahead T, and it's basically the maximum distance the robot will look ahead
+        30   // the lookahead T, and it's basically the maximum distance the robot will look ahead
     );
 
     // path::Line reverseNigga(
@@ -62,9 +62,9 @@ void autonomous()
     path::PathGroup straight({section1}, 200, 10);
 
     pathfollowing::AdaptivePurePursuit controller(
-        std::make_unique<IterativePosPIDController>(0.2, 0.0, 20.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-        std::make_unique<IterativePosPIDController>(0.001, 0.0, 40.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
-        30, 1.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
+        std::make_unique<IterativePosPIDController>(0.1, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+        std::make_unique<IterativePosPIDController>(0.4, 0.0, 0.0, 0.0, TimeUtilFactory::create(), std::make_unique<AverageFilter<5>>()),
+        30, 2.0); // the number before the Kf is the lookahead global, but it will use the path's lookahead by default
 
     // drive::chassis.setBrakeMode(AbstractMotor::brakeMode::brake);
 
@@ -74,6 +74,8 @@ void autonomous()
         controller.loop();
         pros::delay(10);
     }
+    drive::chassis.setBrakeMode(AbstractMotor::brakeMode::hold);
+    drive::chassis.stop();
 
     // controller.setPath(&reverseNigga);
     // while (!controller.isSettled())
